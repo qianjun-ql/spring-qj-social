@@ -6,6 +6,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qj.config.JwtProvider;
+import com.qj.exceptions.UserException;
 import com.qj.models.User;
 import com.qj.repository.UserRepository;
 
@@ -13,7 +15,7 @@ import com.qj.repository.UserRepository;
 public class UserServiceImplementation implements UserService{
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Override
 	public User registerUser(User user) {
@@ -35,14 +37,14 @@ public class UserServiceImplementation implements UserService{
 	}
 
 	@Override
-	public User findUserById(Integer userId) throws Exception{
+	public User findUserById(Integer userId) throws UserException{
 		Optional<User> user= userRepository.findById(userId);
 		
 		if (user.isPresent()) {
 			return user.get();
 		}
 
-		throw new Exception("user does not exist with user id" + userId);
+		throw new UserException("user does not exist with user id" + userId);
 	}
 
 	@Override
@@ -52,25 +54,25 @@ public class UserServiceImplementation implements UserService{
 	}
 
 	@Override
-	public User followUser(Integer userId1, Integer userId2) throws Exception {
-		User user1 = findUserById(userId1);
+	public User followUser(Integer reqUserId, Integer userId2) throws UserException {
+		User reqUser = findUserById(reqUserId);
 		
 		User user2 = findUserById(userId2);
 		
-		user2.getFollowers().add(user1.getId());
-		user1.getFollowList().add(user2.getId());
+		user2.getFollowers().add(reqUser.getId());
+		reqUser.getFollowList().add(user2.getId());
 		
-		userRepository.save(user1);
+		userRepository.save(reqUser);
 		userRepository.save(user2);
-		return user1;
+		return reqUser;
 	}
 
 	@Override
-	public User updateUser(User user, Integer userId) throws Exception {
+	public User updateUser(User user, Integer userId) throws UserException {
 		Optional<User> userOpt = userRepository.findById(userId);
 		
 		if (userOpt.isEmpty()) {
-			throw new Exception("user does not exist");
+			throw new UserException("user does not exist");
 		}
 		
 		User exstUser = userOpt.get();
@@ -88,6 +90,10 @@ public class UserServiceImplementation implements UserService{
 			exstUser.setEmail(user.getEmail());
 		}
 		
+		if (user.getGender() != null) {
+			exstUser.setGender(user.getGender());
+		}
+		
 		User updatedUser = userRepository.save(exstUser);
 		return updatedUser;
 	}
@@ -95,6 +101,16 @@ public class UserServiceImplementation implements UserService{
 	@Override
 	public List<User> searchUser(String query) {
 		return userRepository.searchUser(query);
+	}
+
+	@Override
+	public User findUserByJwt(String jwt) {
+		
+		String email = JwtProvider.getEmailFromJwtToken(jwt);
+		
+		User user = userRepository.findByEmail(email);
+		
+		return user;
 	}
 
 }

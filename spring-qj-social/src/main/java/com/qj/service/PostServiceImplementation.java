@@ -16,13 +16,13 @@ import com.qj.repository.UserRepository;
 public class PostServiceImplementation implements PostService{
 	
 	@Autowired
-	PostRepository postRepository;
+	private PostRepository postRepository;
 	
 	@Autowired
-	UserService userService;
+	private UserService userService;
 	
 	@Autowired
-	UserRepository userRepository;
+	private UserRepository userRepository;
 
 	@Override
 	public Post createPost(Post post, Integer userId) throws Exception {

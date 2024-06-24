@@ -31,13 +31,16 @@ public class Post {
 	@OneToMany
 	private List<User> likedList = new ArrayList<>();
 	
+	@OneToMany
+	private List<Comment> commentList = new ArrayList<>();
+	
 	
 	public Post() {
 		// TODO Auto-generated constructor stub
 	}
 
 	public Post(Integer id, String caption, String image, String video, User user, LocalDateTime createAt,
-			List<User> likedList) {
+			List<User> likedList, List<Comment> commentList) {
 		super();
 		this.id = id;
 		this.caption = caption;
@@ -46,6 +49,17 @@ public class Post {
 		this.user = user;
 		this.createAt = createAt;
 		this.likedList = likedList;
+		this.commentList = commentList;
+	}
+
+
+
+	public List<Comment> getCommentList() {
+		return commentList;
+	}
+
+	public void setCommentList(List<Comment> commentList) {
+		this.commentList = commentList;
 	}
 
 	public List<User> getLikedList() {
@@ -114,9 +128,5 @@ public class Post {
 	public void setCreateAt(LocalDateTime createAt) {
 		this.createAt = createAt;
 	}
-	
-	
-	
-	
 
 }

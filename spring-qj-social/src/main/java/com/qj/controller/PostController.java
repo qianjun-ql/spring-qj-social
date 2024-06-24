@@ -11,71 +11,84 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qj.models.Post;
+import com.qj.models.User;
 import com.qj.response.ApiResponse;
 import com.qj.service.PostService;
+import com.qj.service.UserService;
 
 @RestController
 public class PostController {
-	
+
 	@Autowired
 	PostService postService;
-	
-	@PostMapping("/posts/user/{userId}")
-	public ResponseEntity<Post> createPost(@RequestBody Post post, @PathVariable Integer userId) throws Exception {
-		
-		Post newPost = postService.createPost(post, userId);
-		return new ResponseEntity<>(newPost,HttpStatus.ACCEPTED);
+
+	@Autowired
+	UserService userService;
+
+	@PostMapping("/api/posts")
+	public ResponseEntity<Post> createPost(@RequestHeader("Authorization") String jwt, @RequestBody Post post)
+			throws Exception {
+
+		User reqUser = userService.findUserByJwt(jwt);
+		Post newPost = postService.createPost(post, reqUser.getId());
+		return new ResponseEntity<>(newPost, HttpStatus.ACCEPTED);
 	}
-	
-	@DeleteMapping("/posts/{postId}/user/{userId}")
-	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId, @PathVariable Integer userId) throws Exception {
-		
-		String message = postService.deletePost(postId, userId);
+
+	@DeleteMapping("/api/posts/{postId}")
+	public ResponseEntity<ApiResponse> deletePost(@PathVariable Integer postId,
+			@RequestHeader("Authorization") String jwt) throws Exception {
+
+		User reqUser = userService.findUserByJwt(jwt);
+		String message = postService.deletePost(postId, reqUser.getId());
 		ApiResponse res = new ApiResponse(message, true);
-		return new ResponseEntity<ApiResponse>(res,HttpStatus.OK);
+		return new ResponseEntity<ApiResponse>(res, HttpStatus.OK);
 	}
-	
-	@GetMapping("/posts/{postId}")
+
+	@GetMapping("/api/posts/{postId}")
 	public ResponseEntity<Post> findPostByIdHandler(@PathVariable Integer postId) throws Exception {
-		
+
 		Post post = postService.findPostById(postId);
-		
+
 		return new ResponseEntity<Post>(post, HttpStatus.ACCEPTED);
 	}
 
-	@GetMapping("/posts/user/{userId}")
+	@GetMapping("/api/posts/user/{userId}")
 	public ResponseEntity<List<Post>> findUserPost(@PathVariable Integer userId) {
 		List<Post> posts = postService.findPostByUserId(userId);
-		
+
 		return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 	}
-	
-	@GetMapping("/posts")
+
+	@GetMapping("/api/posts")
 	public ResponseEntity<List<Post>> findAllPost() {
 		List<Post> posts = postService.findAllPost();
-		
+
 		return new ResponseEntity<List<Post>>(posts, HttpStatus.OK);
 	}
-	
 
-	@PutMapping("/posts/save/{postId}/user/{userId}")
-	public ResponseEntity<Post> savePostHandler(@PathVariable Integer postId, @PathVariable Integer userId) throws Exception {
+	@PutMapping("/api/posts/save/{postId}")
+	public ResponseEntity<Post> savePostHandler(@PathVariable Integer postId, @RequestHeader("Authorization") String jwt)
+			throws Exception {
 		
-		Post post = postService.savedPost(postId, userId);
-		
+		User reqUser = userService.findUserByJwt(jwt);
+
+		Post post = postService.savedPost(postId, reqUser.getId());
+
 		return new ResponseEntity<Post>(post, HttpStatus.ACCEPTED);
 	}
-	
-	@PutMapping("/posts/like/{postId}/user/{userId}")
-	public ResponseEntity<Post> likePostHandler(@PathVariable Integer postId, @PathVariable Integer userId) throws Exception {
+
+	@PutMapping("/api/posts/like/{postId}")
+	public ResponseEntity<Post> likePostHandler(@PathVariable Integer postId, @RequestHeader("Authorization") String jwt)
+			throws Exception {
 		
-		Post post = postService.likedPost(postId, userId);
-		
+		User reqUser = userService.findUserByJwt(jwt);
+		Post post = postService.likedPost(postId, reqUser.getId());
+
 		return new ResponseEntity<Post>(post, HttpStatus.ACCEPTED);
 	}
-	
-	
+
 }
