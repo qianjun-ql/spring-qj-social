@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,13 @@ import com.qj.models.User;
 import com.qj.repository.PostRepository;
 import com.qj.repository.UserRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class PostServiceImplementation implements PostService{
+	
+	private static final Logger logger = LoggerFactory.getLogger(PostServiceImplementation.class);
 	
 	@Autowired
 	private PostRepository postRepository;
@@ -90,9 +96,14 @@ public class PostServiceImplementation implements PostService{
 		Post post = findPostById(postId);
 		User user = userService.findUserById(userId);
 		
+        logger.info("Post before update: {}", post);
+        logger.info("User attempting to like/unlike: {}", user);
+		
 		if (post.getLikedList().contains(user)) {
+			logger.info("User {} already liked the post. Removing like.", user.getId());
 			post.getLikedList().remove(user);
 		} else {
+			logger.info("User {} has not liked the post. Adding like.", user.getId());
 			post.getLikedList().add(user);
 		}
 
