@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.qj.config.JwtProvider;
 import com.qj.exceptions.UserException;
+import com.qj.models.Post;
 import com.qj.models.User;
 import com.qj.repository.UserRepository;
 
@@ -29,6 +30,9 @@ public class UserServiceImplementation implements UserService{
 		newUser.setFollowList(user.getFollowList());
 		newUser.setGender(user.getGender());
 		newUser.setId(user.getId());
+		newUser.setBannerPhoto(user.getBannerPhoto());
+		newUser.setBio(user.getBio());
+		newUser.setProfilePhoto(user.getProfilePhoto());
 		
 		User savedUser = userRepository.save(newUser);
 		
@@ -55,16 +59,22 @@ public class UserServiceImplementation implements UserService{
 
 	@Override
 	public User followUser(Integer reqUserId, Integer userId2) throws UserException {
-		User reqUser = findUserById(reqUserId);
-		
-		User user2 = findUserById(userId2);
-		
-		user2.getFollowers().add(reqUser.getId());
-		reqUser.getFollowList().add(user2.getId());
-		
-		userRepository.save(reqUser);
-		userRepository.save(user2);
-		return reqUser;
+	    User reqUser = findUserById(reqUserId);
+	    User user2 = findUserById(userId2);
+
+	    if (user2.getFollowers().contains(reqUser.getId())) {
+	        // Unfollow logic
+	        user2.getFollowers().remove(reqUser.getId());
+	        reqUser.getFollowList().remove(user2.getId());
+	    } else {
+	        // Follow logic
+	        user2.getFollowers().add(reqUser.getId());
+	        reqUser.getFollowList().add(user2.getId());
+	    }
+
+	    userRepository.save(reqUser);
+	    userRepository.save(user2);
+	    return reqUser;
 	}
 
 	@Override
@@ -94,6 +104,18 @@ public class UserServiceImplementation implements UserService{
 			exstUser.setGender(user.getGender());
 		}
 		
+		if (user.getBio() != null) {
+			exstUser.setBio(user.getBio());
+		}
+		
+		if (user.getBannerPhoto() != null) {
+			exstUser.setBannerPhoto(user.getBannerPhoto());
+		}
+		
+		if (user.getProfilePhoto() != null) {
+			exstUser.setProfilePhoto(user.getProfilePhoto());
+		}
+		
 		User updatedUser = userRepository.save(exstUser);
 		return updatedUser;
 	}
@@ -112,5 +134,11 @@ public class UserServiceImplementation implements UserService{
 		
 		return user;
 	}
-
+	
+	@Override
+	public List<Post> getSavedPosts(String jwt) {
+	    User user = findUserByJwt(jwt);
+	    return user.getSavedPosts();
+	}
+ 
 }

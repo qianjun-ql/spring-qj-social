@@ -14,7 +14,7 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name="users")
+@Table(name = "users")
 public class User {
 
 	@Id
@@ -26,21 +26,24 @@ public class User {
 	private String email;
 	private String password;
 	private String gender;
-	
-	
+	private String bio;
+	private String bannerPhoto;
+	private String profilePhoto;
+
 	private List<Integer> followers = new ArrayList<>();
-	private List<Integer> followList  = new ArrayList<>();
-	
+	private List<Integer> followList = new ArrayList<>();
+
 	@JsonIgnore
 	@ManyToMany
 	private List<Post> savedPosts = new ArrayList<>();
-	
+
 	public User() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public User(Integer id, String firstName, String lastName, String email, String password, String gender,
-			List<Integer> followers, List<Integer> followList, List<Post> savedPosts) {
+	public User(Integer id, String firstName, String lastName, String email, String password, String gender, String bio,
+			String bannerPhoto, String profilePhoto, List<Integer> followers, List<Integer> followList,
+			List<Post> savedPosts) {
 		super();
 		this.id = id;
 		this.firstName = firstName;
@@ -48,13 +51,37 @@ public class User {
 		this.email = email;
 		this.password = password;
 		this.gender = gender;
+		this.bio = bio;
+		this.bannerPhoto = bannerPhoto;
+		this.profilePhoto = profilePhoto;
 		this.followers = followers;
 		this.followList = followList;
 		this.savedPosts = savedPosts;
 	}
 
+	public String getBio() {
+		return bio;
+	}
 
+	public void setBio(String bio) {
+		this.bio = bio;
+	}
 
+	public String getBannerPhoto() {
+		return bannerPhoto;
+	}
+
+	public void setBannerPhoto(String bannerPhoto) {
+		this.bannerPhoto = bannerPhoto;
+	}
+
+	public String getProfilePhoto() {
+		return profilePhoto;
+	}
+
+	public void setProfilePhoto(String profilePhoto) {
+		this.profilePhoto = profilePhoto;
+	}
 
 	public List<Post> getSavedPosts() {
 		return savedPosts;
@@ -92,40 +119,40 @@ public class User {
 		return id;
 	}
 
-
-
-
 	public void setId(Integer id) {
 		this.id = id;
 	}
 
-
-
-
 	public String getFirstName() {
 		return firstName;
 	}
+
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
 	}
+
 	public String getLastName() {
 		return lastName;
 	}
+
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
+
 	public String getEmail() {
 		return email;
 	}
+
 	public void setEmail(String email) {
 		this.email = email;
 	}
+
 	public String getPassword() {
 		return password;
 	}
+
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
-	
+
 }

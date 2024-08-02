@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.qj.exceptions.UserException;
+import com.qj.models.Post;
 import com.qj.models.User;
 import com.qj.repository.UserRepository;
 import com.qj.service.UserService;
@@ -83,6 +84,12 @@ public class UserController {
 		user.setPassword(null);
 		
 		return user;
+	}
+	
+	@GetMapping("/api/users/saved-posts")
+	public List<Post> getSavedPosts(@RequestHeader ("Authorization") String jwt) {
+		List<Post> savedPosts = userService.getSavedPosts(jwt);
+		return savedPosts;
 	}
 
 }

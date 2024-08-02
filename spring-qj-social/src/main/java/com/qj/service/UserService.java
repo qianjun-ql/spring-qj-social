@@ -3,6 +3,7 @@ package com.qj.service;
 import java.util.List;
 
 import com.qj.exceptions.UserException;
+import com.qj.models.Post;
 import com.qj.models.User;
 
 public interface UserService {
@@ -20,5 +21,8 @@ public interface UserService {
 	public List<User> searchUser(String query);
 	
 	public User findUserByJwt(String jwt);
+	
+	public List<Post> getSavedPosts(String jwt);
+
 
 }
