@@ -22,7 +22,7 @@ public interface UserService {
 	
 	public User findUserByJwt(String jwt);
 	
-	public List<Post> getSavedPosts(String jwt);
+	public List<Post> getSavedPosts(String jwt, Integer userId) throws UserException;
 
 
 }

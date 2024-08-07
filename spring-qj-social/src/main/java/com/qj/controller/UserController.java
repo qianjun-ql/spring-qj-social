@@ -86,9 +86,9 @@ public class UserController {
 		return user;
 	}
 	
-	@GetMapping("/api/users/saved-posts")
-	public List<Post> getSavedPosts(@RequestHeader ("Authorization") String jwt) {
-		List<Post> savedPosts = userService.getSavedPosts(jwt);
+	@GetMapping("/api/users/saved-posts/{userId}")
+	public List<Post> getSavedPosts(@RequestHeader ("Authorization") String jwt, @PathVariable("userId") Integer id) throws UserException {
+		List<Post> savedPosts = userService.getSavedPosts(jwt, id);
 		return savedPosts;
 	}
 

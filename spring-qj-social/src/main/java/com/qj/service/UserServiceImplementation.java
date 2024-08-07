@@ -136,8 +136,8 @@ public class UserServiceImplementation implements UserService{
 	}
 	
 	@Override
-	public List<Post> getSavedPosts(String jwt) {
-	    User user = findUserByJwt(jwt);
+	public List<Post> getSavedPosts(String jwt, Integer userId) throws UserException {
+	    User user = findUserById(userId);
 	    return user.getSavedPosts();
 	}
  
