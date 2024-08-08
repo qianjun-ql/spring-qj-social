@@ -3,6 +3,7 @@ package com.qj.service;
 import java.util.List;
 
 import com.qj.models.Post;
+import com.qj.response.ApiResponse;
 
 public interface PostService {
 	
@@ -13,7 +14,7 @@ public interface PostService {
 	
 	List<Post> findAllPost();
 	
-	Post savedPost(Integer postId, Integer userId) throws Exception;
+	ApiResponse savedPost(Integer postId, Integer userId) throws Exception;
 	
 	Post likedPost(Integer postId, Integer userId) throws Exception;
 	

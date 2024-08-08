@@ -12,6 +12,7 @@ import com.qj.models.Post;
 import com.qj.models.User;
 import com.qj.repository.PostRepository;
 import com.qj.repository.UserRepository;
+import com.qj.response.ApiResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,19 +78,40 @@ public class PostServiceImplementation implements PostService{
 		return postRepository.findAll();
 	}
 
+//	@Override
+//	public Post savedPost(Integer postId, Integer userId) throws Exception {
+//		Post post = findPostById(postId);
+//		User user = userService.findUserById(userId);
+//		
+//		if (user.getSavedPosts().contains(post)) {
+//			user.getSavedPosts().remove(post);
+//		} else {
+//			user.getSavedPosts().add(post);
+//		}
+//		userRepository.save(user);
+//		return post;
+//	}
+	
 	@Override
-	public Post savedPost(Integer postId, Integer userId) throws Exception {
-		Post post = findPostById(postId);
-		User user = userService.findUserById(userId);
-		
-		if (user.getSavedPosts().contains(post)) {
-			user.getSavedPosts().remove(post);
-		} else {
-			user.getSavedPosts().add(post);
-		}
-		userRepository.save(user);
-		return post;
+	public ApiResponse savedPost(Integer postId, Integer userId) throws Exception {
+	    Post post = findPostById(postId);
+	    User user = userService.findUserById(userId);
+	    boolean isSaved;
+
+	    if (user.getSavedPosts().contains(post)) {
+	        user.getSavedPosts().remove(post);
+	        isSaved = false;
+	    } else {
+	        user.getSavedPosts().add(post);
+	        isSaved = true;
+	    }
+
+	    userRepository.save(user);
+
+	    return new ApiResponse("Post save status updated", true, postId, isSaved);
 	}
+
+
 
 	@Override
 	public Post likedPost(Integer postId, Integer userId) throws Exception {
